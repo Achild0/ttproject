@@ -1,5 +1,5 @@
 <?php
-  error_reporting(E_ALL ^ E_NOTICE);  
+  //error_reporting(E_ALL ^ E_NOTICE);  
   session_start();
   if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); // Chaîne sécurisée et aléatoire
@@ -10,8 +10,8 @@
   $controllerDir = "/controler/";
 
   $routes = [
-    "main" => __DIR__.$viewdir."mainpage.php",
-    "adm" => __DIR__.$viewdir."admpage.php",
+    "main" => __DIR__.$controllerDir."maincontroller.php",
+    "adm" => __DIR__.$viewdir."sec/admpage.php",
     "login" => __DIR__.$controllerDir.'admcontroller.php',
     "product" => __DIR__.$controllerDir."maincontroller.php"
   ];
@@ -19,7 +19,7 @@
   $request = $_SERVER['REQUEST_URI'];
   //$basepath = str_replace(basename($_SERVER['SCRIPT_NAME']), "", $_SERVER['SCRIPT_NAME']);
   //$request = str_replace($basepath, "", $request);
-  print("<p>The path is : ".$request."</p>");
+  //print("<p>The path is : ".$request."</p>");
 
   //Path manipulation
   $requestparts = explode('/', str_replace("?", "", $request));
@@ -39,7 +39,7 @@
 
     case "adm":
       if ($_SESSION["isadm"]){
-        $routes[$route];
+        require $routes[$route];
       }else {
         header("Location: /login");
       }
