@@ -1,5 +1,5 @@
 <?php
-    $_SERVER["pdo"] = new PDO('mysql:host=localhost;dbname=mkboutick', 'root');
+    $_SERVER["pdo"] = new PDO('mysql:host=localhost;dbname=mkboutick','mkbout','mk');
 
     // Data IP
     function addBanIp($ip) {
@@ -40,16 +40,19 @@
     // Data produits
 
     function getRandProduits(){
-        $stmt = $_SERVER["pdo"]->prepare("SELECT * FROM produits LIMIT 10");
+        $stmt = $_SERVER["pdo"]->prepare("SELECT produits.id, produits.nom, produits.categorie, photos.name FROM produits LEFT JOIN photos ON produits.id = photos.produit LIMIT 10");
         $stmt->execute();
         $res = $stmt->fetchAll();
         return $res;
     }
 
-    function addProduit($nom,$idcateg){
+    function addProduit($nom,$idcateg,$idprod,$photos){
         $stmt = $_SERVER["pdo"]->prepare("INSERT INTO produits (nom,categorie,valide) VALUES (:nom,:idcateg,'OUI')");
         $stmt->execute(['nom' => $nom,'idcateg' => $idcateg]);
-        
+        $stmt = $stmt = $_SERVER["pdo"]->prepare("INSERT INTO photos (name,produit) VALUES (:nom,:idprod)");
+        foreach($photos as $pic){
+            $stmt->execute(['name'=>$pic,'idprod'=> $idprod]);
+        }
     }
 
     function invalidateProduit($id){
