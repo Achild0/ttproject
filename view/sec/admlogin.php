@@ -19,6 +19,7 @@
                 var stoken = "<?php echo $_SESSION['csrf_token']; ?>"
                 $.post("/login",
                 {
+                    type: "login",
                     token: stoken,
                     password: pa
                 },

@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <div class="container-fluid">
         <div class="container-fluid w-auto">
-          <a class="navbar-brand" href="#">
-              <img src="img\logo_rond_64.png" width="64" height="64" type="icon"/>
+          <a class="navbar-brand" href="/">
+              <img src="http://127.0.0.1:80/img/logo_rond_64.png" width="64" height="64" type="icon"/>
             MK Boutique</a>
         </div>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,7 @@
               <ul class="dropdown-menu">
                 <?php
                   foreach($categs as $cat){
-                    print('<li><a class="dropdown-item" value="'.$cat["id"].'" href="/produit/'.$cat["nom"].'">'. $cat["nom"].'</a></li>');
+                    print('<li><a class="dropdown-item" value="'.$cat["id"].'" href="/categ/'.$cat["nom"].'">'. $cat["nom"].'</a></li>');
                   }
                 ?>
               </ul>
@@ -27,10 +27,6 @@
               <a class="nav-link" href="#">Contact</a>
             </li>
           </ul>
-          <!--<form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Recherche" aria-label="Recherche">
-            <button class="btn btn-outline-success" type="submit">Recherche</button>
-          </form>-->
         </div>
     </div>
 </nav>

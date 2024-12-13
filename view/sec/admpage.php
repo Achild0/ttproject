@@ -3,22 +3,24 @@
     <?php include 'view\mendatory\head.php'; ?>
     <body>
         <div class="container">
-            <h2 class="text-align-center">Bonjour Tonton, bienvenue dans ton espace de configuration, ici du peux configurer comme tu l'entends ton site</h2>
+            <h2 class="text-align-center mb-3">Page d'administration</h2>
         </div>
         <div class="container">
             <h3>Catégories</h3>
             <div class="container p-2 mb-3 border">
                 <label for="inputCateg" class="form-label">Créer une nouvelle catégorie</label>
-                <input type="text" class="form-control" id="inputCateg" placeholder="Nom de la nouvelle catégorie ..." />
+                <input type="text" class="form-control" id="inputCateg" placeholder="Nom de la nouvelle catégorie" />
                 <button id="catcreate" class="btn btn-primary mt-2">Créer</button>
             </div>
             <div class="container mb-3 p-2 border">
                 <label for="listCateg" class="form-label">Modifier une catégorie</label>
-                <select id="listCateg" class="form-select" aria-label="Default select example">
-                    <option selected>Choisir une catégorie</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
+                <select id="listCateg" class="form-select">
+                    <?php
+                        foreach($categs as $cat){
+                            print('<option value="'.$cat["id"].'">'. $cat["nom"].'</option>');
+                          }
+                    ?>
+                    <option value="0" selected>Choisir une catégorie</option>
                 </select>
                 <div class="mt-2">
                     <label for="nomcat">Nom catégorie</label>
@@ -28,62 +30,98 @@
                     <button id="modifiycateg" class = "btn btn-primary">Modifier</button>
                 </div>
             </div>
-            <h3>Produits</h3>
+            <h3>Créer un Produit</h3>
             <div class="container p-2 border">
-                <label class="form-label" for="nom_prod">Créer un nouveau produit</label>
-                <input type="text" class="form-control" id="nom_prod" placeholder="Nom du nouveau produit"/>
-                <label class="form-label mt-2" for="listProdCateg">Choisir sa catégorie</label>
-                <select id="listProdCateg" class="form-select" aria-label="Default select example">
-                            <option selected>Choisir une catégorie</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                <label class="form-label" for="nom-prod">Nom produit</label>
+                <input type="text" class="form-control" id="nom-prod" placeholder="Nom du nouveau produit"/>
+                <label class="form-label mt-2" for="categ-prod">Choisir sa catégorie</label>
+                <select id="categ-prod" class="form-select">
+                    <option value="0" selected>Choisir une catégorie</option>
+                    <?php
+                        foreach($categs as $cat){print('<option value="'.$cat["id"].'">'. $cat["nom"].'</option>');}
+                    ?>
                 </select>
-                <label class="form-label" for="prix_prod">Prix</label>
+                <label class="form-label" for="desc-prod">Description</label>
+                <textarea type="text" class="form-control" id="desc-prod" placeholder="Entrez une description"></textarea>
+                <label class="form-label" for="prix-prod">Prix</label>
                 <input type="number" class="form-control" id="prix-prod" step="0.01" placeholder="0.00"/>
                 <div class="card mt-3">
                     <div class="card-header"><strong>Envoi de photos</strong></div>
                     <div class="card-body">
 
-                    <!-- Standar Form -->
-                    <h4>Selectionner un fichier sur l'ordinateur</h4>
+                    <!-- Standart Form -->
+                    <h4>Selectionner une image sur l'ordinateur</h4>
                     <div>
                         <div class="input-group">
                             <input class="form-control" type="file" id="js-upload-files" accept="image/*">
-                            <button class="btn btn-sm btn-primary" id="js-upload-submit">Envoyer les fichiers</button>
+                            <button class="btn btn-sm btn-primary" id="js-upload-submit">Ajouter l'image</button>
                         </div>
                     </div>
-                    <!-- Drop Zone -->
-                    <h4>ou déposer le fichier ci-dessous</h4>
-                    <div class="upload-drop-zone" id="drop-zone">
-                        Délpacez la photo ici
-                    </div>
-
-                    <!-- Progress Bar -->
-                    <!--<div class="progress">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
-                        </div>
-                    </div>-->
 
                     <!-- Upload Finished -->
-                    <div class="js-upload-finished">
-                        <h3>Fichiers envoyés :</h3>
+                    <div class="js-upload-finished mt-2">
+                        <h3>Images prêtes pour l'upload :</h3>
                         <div class="container" id="file_job">
                         </div>
                     </div>
                     </div>
                 </div>
-                <h3>Preview</h3>
+                <h3>Visuel final :</h3>
                 <div class="card col-2 m-2" id="preview_card" style="width: 15rem;">
                     <img src="" height="180" width="130" class="card-img-top">
                     <div class="card-body">
                     <h4 class="card-title" id="prd_nom">Nom Produit</h4>
-                    <h5 id="prd_prix">19.99€</h5>
-                    <p class="card-text" id="prd_desc">Petite description rapide </p>
-                    <div class="btn btn-success" disable>Voir</div>
+                    <h5 id="prd_prix">0.00€</h5>
+                    <p class="card-text" id="prd_desc">Petite description rapide</p>
+                    <div class="btn btn-success" disabled>Voir</div>
                     </div>
                 </div>
-                <button class="btn btn-primary mt-3">Créer Produit</button>
+                <button class="btn btn-primary mt-3" id="create_prodct">Créer le Produit</button>
+            </div>
+            <h3>Modifier un produit</h3>
+            <div class="container mb-3 p-2 border">
+                <label class="form-label" for="prd_mdfy_sel">Choisir le produit à modifier</label>
+                <select class="form-select" id="prd_mdfy_sel">
+                    <option selected>Choisir un produit</option>
+                    <?php foreach($categs as $cat){print('<option value="'.$cat["id"].'">'. $cat["nom"].'</option>');} ?>
+                </select>
+                <div id="mod_prod_div" class="container mt-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="prd_mdfy_val" checked>
+                    <label class="form-check-label" for="prd_mdfy_val">Produit valide/actif</label>
+                </div>
+                    <label class="form-label" for="nom-mod-prod">Nom produit</label>
+                    <input type="text" class="form-control" id="nom-mod-prod" placeholder="Nom du nouveau produit"/>
+                    <label class="form-label mt-2" for="categ-mod-prod">Choisir sa catégorie</label>
+                    <select id="categ-mod-prod" class="form-select" aria-label="Default select example">
+                                <option value="0" selected>Choisir une catégorie</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                    </select>
+                    <label class="form-label" for="desc-mod-prod">Description</label>
+                    <textarea type="text" class="form-control" id="desc-mod-prod" placeholder="Entrez une description"></textarea>
+                    <label class="form-label" for="prix-mod-prod">Prix</label>
+                    <input type="number" class="form-control" id="prix-mod-prod" step="0.01" placeholder="0.00"/>
+                    <div class="card mt-3">
+                        <div class="card-header"><strong>Envoi de photos</strong></div>
+                        <div class="card-body">
+                        <h4>Selectionner une image sur l'ordinateur</h4>
+                        <div>
+                            <div class="input-group">
+                                <input class="form-control" type="file" id="js-upload-files" accept="image/*">
+                                <button class="btn btn-sm btn-primary" id="js-upload-submit">Ajouter l'image</button>
+                            </div>
+                        </div>
+
+                        <div class="js-upload-finished mt-2">
+                            <h3>Images prêtes pour l'upload :</h3>
+                            <div class="container" id="file_job">
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -91,31 +129,78 @@
 
             $(document).ready(function(){
 
-                // UPLOAD CLASS DEFINITION
-                // ======================
-                
+                var stoken = "<?php echo $_SESSION['csrf_token']; ?>"
+              
                 var dropZone = $("#drop-zone");
                 var uploadForm = $('#js-upload-form');
                 var imgtextupload = $('#js-upload-files')
                 var files = new Array();
 
-                var startUpload = function(files) {
-                    console.log(files)
-                }
+                var prd_nom = "";
+                var prd_cat;
+                var prd_prix;
+                var prd_desc = "";
+
+                //$("#mod_prod_div").hide();
 
                 function refreshFiles(){
                     console.log("Refresh files")
                     $("#file_job").text("");
                     for (let i = 0;i < files.length;i++){
-                        console.log(files[i]);
                         $("#file_job").append('<div class="m-1 btn btn-secondary upload_img" value="'+i+'">Upload '+files[i].name+' Prêt</div>');
                     }
 
                     $(".upload_img").click(function(){
-                    console.log("click s")
                     r = files.splice($(this).attr("value"))
                     $(this).remove()
                 })
+                }
+
+                function createProduct(){
+                    console.log("prd_nom = "+ prd_nom)
+                    console.log("prd_cat = "+ prd_cat)
+                    console.log("prd_prix = "+ prd_prix)
+                    console.log("prd_desc = "+ prd_desc)
+                    console.log("files_length = "+ files.length)
+                    if((prd_nom != "" && prd_nom != null) && (prd_cat != null && prd_cat != "0") && (prd_prix != null && prd_prix != "") && prd_desc != "" && files.length > 0){
+                        var formdata = new FormData();
+                        formdata.append('token',stoken);
+                        formdata.append('type','product_creation');
+                        formdata.append('name',sanitizeString(prd_nom));
+                        formdata.append('categ',sanitizeString(prd_cat));
+                        formdata.append('prix',sanitizeString(prd_prix));
+                        formdata.append('desc',sanitizeString(prd_desc));
+
+                        for (let i = 0;i < files.length; i++){
+                            formdata.append('imgs[]',files[i], files[i].name)
+                        }
+
+                        $.ajax({
+                            url: '/adm',
+                            data: formdata,
+                            processData: false,
+                            contentType: false,
+                            type: 'POST',
+                            success: function(data){
+                                alert(data);
+                            }
+                        });
+                        
+                    }else{
+                        alert("Il manque des informations pour créer le produit");
+                    }
+                }
+
+                function fetchProduct(){
+                    $.post("/product",
+                    {
+                        type: "product_get",
+                        token: stoken,
+                        product: pa
+                    },
+                    function(data, status){        
+                        console.log("Réponse : " + data);
+                    })
                 }
 
                 $("#js-upload-submit").click(function(){
@@ -137,30 +222,33 @@
                     $(this).remove()
                 })
 
-                /*uploadForm.addEventListener('submit', function(e) {
-                    files.pushdocument($('js-upload-files').files);
-                    e.preventDefault()
+                $("#listCateg").change(function(){
+                    $("#nomcat").prop("disabled",false);
+                })
 
-                    startUpload(uploadFiles)
-                })*/
+                $("#nom-prod").change(function(){
+                    prd_nom = $("#nom-prod").val();
+                    $("#prd_nom").text(prd_nom);
+                })
 
-                dropZone.ondrop = function(e) {
-                    e.preventDefault();
-                    this.className = 'upload-drop-zone';
-                    files.push(e.dataTransfer.files)
-                    refreshFiles();
-                    //startUpload(e.dataTransfer.files)
-                }
+                $("#desc-prod").change(function(){
+                    prd_desc = $("#desc-prod").val();
+                    $("#prd_desc").text(prd_desc);
+                })
 
-                dropZone.ondragover = function() {
-                    this.className = 'upload-drop-zone drop';
-                    return false;
-                }
+                $("#prix-prod").change(function(){
+                    prd_prix = $("#prix-prod").val();
+                    $("#prd_prix").text(prd_prix + "€");
+                })
 
-                dropZone.ondragleave = function() {
-                    this.className = 'upload-drop-zone';
-                    return false;
-                }
+                $("#categ-prod").change(function(){
+                    console.log("Product cat changed");
+                    console.log($("#categ-prod"));
+                    prd_cat = $("#categ-prod").val();
+                    console.log(prd_cat);
+                })
+
+                $("#create_prodct").click(function(){createProduct()});
 
             });
             </script>

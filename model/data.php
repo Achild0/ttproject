@@ -40,18 +40,30 @@
     // Data produits
 
     function getRandProduits(){
-        $stmt = $_SERVER["pdo"]->prepare("SELECT produits.id, produits.nom, produits.categorie, photos.name FROM produits LEFT JOIN photos ON produits.id = photos.produit LIMIT 10");
+        $stmt = $_SERVER["pdo"]->prepare("SELECT produits.id, produits.nom,produits.description, produits.categorie , produits.prix FROM produits WHERE valide = 'OUI' LIMIT 10");
         $stmt->execute();
         $res = $stmt->fetchAll();
-        return $res;
+        $stmt = $_SERVER["pdo"]->prepare("SELECT name FROM photos WHERE produit = :prod");
+        $maxres = [];
+        foreach($res as $prod){
+            $stmt->execute(["prod" => $prod["id"]]);
+            $ph = $stmt->fetchAll();    
+            foreach($ph as $phot){
+            $prod["photos"][] = $phot["name"];
+            }
+            $maxres[] = $prod;
+        }
+        return $maxres;
     }
 
-    function addProduit($nom,$idcateg,$idprod,$photos){
-        $stmt = $_SERVER["pdo"]->prepare("INSERT INTO produits (nom,categorie,valide) VALUES (:nom,:idcateg,'OUI')");
-        $stmt->execute(['nom' => $nom,'idcateg' => $idcateg]);
-        $stmt = $stmt = $_SERVER["pdo"]->prepare("INSERT INTO photos (name,produit) VALUES (:nom,:idprod)");
+    function addProduit($nom,$prix,$desc,$idcateg,$photos){
+        $stmt = $_SERVER["pdo"]->prepare("INSERT INTO produits (nom,prix,description,categorie,valide) VALUES (:nom,:prix,:desc,:idcateg,'OUI')");
+        $stmt->execute(['nom' => $nom,'prix' => $prix, 'desc'=> $desc, 'idcateg' => $idcateg]);
+        $lastid = $_SERVER["pdo"]->lastInsertId();
+        print("LAstID = ".$lastid);
+        $stmt = $_SERVER["pdo"]->prepare("INSERT INTO photos (name,produit) VALUES (:nom,:idprod)");
         foreach($photos as $pic){
-            $stmt->execute(['name'=>$pic,'idprod'=> $idprod]);
+            $stmt->execute(['nom'=>$pic,'idprod'=> $lastid]);
         }
     }
 
@@ -79,13 +91,29 @@
         $stmt = $_SERVER["pdo"]->prepare("SELECT * FROM produits WHERE id = :id");
         $stmt->execute(['id' => $id]);
         $res = $stmt->fetchAll();
+        $stmt = $_SERVER["pdo"]->prepare("SELECT name FROM photos WHERE produit = :prod");
+        $stmt->execute(["prod" => $id]);
+        $ph = $stmt->fetchAll();    
+        foreach($ph as $phot){
+            $res["photos"][] = $phot["name"];
+        }
         return $res;
     }
 
     function getProduitsByCateg($idcateg){
-        $stmt = $_SERVER["pdo"]->prepare("SELECT * FROM produits WHERE categorie = :idcateg");
-        $stmt->execute(['categorie' => $idcateg]);
+        $stmt = $_SERVER["pdo"]->prepare("SELECT * FROM produits WHERE categorie = :idcateg AND valide = 'OUI'");
+        $stmt->execute(['idcateg' => $idcateg]);
         $res = $stmt->fetchAll();
-        return $res;
+        $stmt = $_SERVER["pdo"]->prepare("SELECT name FROM photos WHERE produit = :prod");
+        $catmaxres = [];
+        foreach($res as $product){
+            $stmt->execute(["prod" => $product["id"]]);
+            $ph = $stmt->fetchAll();    
+            foreach($ph as $phot){
+            $product["photos"][] = $phot["name"];
+            }
+            $catmaxres[] = $product;
+        }
+        return $catmaxres;
     }
 ?>

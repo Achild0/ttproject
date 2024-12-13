@@ -11,9 +11,10 @@
 
   $routes = [
     "main" => __DIR__.$controllerDir."maincontroller.php",
-    "adm" => __DIR__.$viewdir."sec/admpage.php",
+    "adm" => __DIR__.$controllerDir."admcontroller.php",
     "login" => __DIR__.$controllerDir.'admcontroller.php',
-    "product" => __DIR__.$controllerDir."maincontroller.php"
+    "product" => __DIR__.$controllerDir."productcontroller.php",
+    "categ" => __DIR__.$controllerDir."maincontroller.php"
   ];
 
   $request = $_SERVER['REQUEST_URI'];
@@ -30,6 +31,12 @@
   switch ($route) {
     
     case 'product':
+      if (!isset($requestparts[2])){
+        //exit(1);
+        require $routes["main"];
+        exit(0);
+      }
+      $product = intval($requestparts[2]);
       require $routes[$route];
       break;
     
@@ -38,16 +45,18 @@
       break;
 
     case "adm":
-      if ($_SESSION["isadm"]){
+      require $routes[$route];
+      break;
+    
+    case "categ":
+      if (isset($requestparts[2])){
+        $categ = htmlspecialchars($requestparts[2]);
         require $routes[$route];
-      }else {
-        header("Location: /login");
       }
       break;
 
     default:
       require $routes["main"];
       break;
-
   }
 ?>
