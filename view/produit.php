@@ -29,7 +29,7 @@
                           if ($counter == 0){
                             print('active');
                           }
-                          print(' "><img src="'.__DIR__."/../".$pic.'" class="d-block w-100"></div>');
+                          print(' "><img src="/'.$pic.'" class="d-block w-100"></div>');
                           $counter += 1;
                         }
                       ?>

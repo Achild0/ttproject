@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="container-fluid w-auto">
           <a class="navbar-brand" href="/">
-              <img src="http://127.0.0.1:80/img/logo_rond_64.png" width="64" height="64" type="icon"/>
+              <img src="/img/logo_rond_64.png" width="64" height="64" type="icon"/>
             MK Boutique</a>
         </div>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
