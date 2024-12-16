@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <?php include 'view\mendatory\head.php'; ?>
+    <?php include __DIR__.'/view/mendatory/head.php'; ?>
     <body>
         <div class="container">
             <h2 class="text-align-center mb-3">Page d'administration</h2>

@@ -1,5 +1,9 @@
 <?php 
-    include "model\data.php";
+
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    include __DIR__."/model/data.php";
 
     switch ($_SERVER["REQUEST_METHOD"]){
 
@@ -24,5 +28,5 @@
     
     $mainproduct = getProduit($product);
     
-    require "view\produit.php";
+    require __DIR__."/view/produit.php";
 ?>

@@ -1,8 +1,8 @@
 
 <html lang="fr">
-<?php include 'mendatory/head.php'; ?>
+<?php include __DIR__.'/view/mendatory/head.php'; ?>
   <body>
-    <?php include 'mendatory/navbar.php'; ?>
+    <?php include __DIR__.'/view/mendatory/navbar.php'; ?>
     <section style="margin-top: 160px;">
       <div class="container bg-light" >
         <div class="row">
