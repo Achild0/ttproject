@@ -14,7 +14,7 @@
               foreach($carticles as $art){
                 print(
                 '<div class="card col-2 m-2" style="width: 15rem;">
-                  <img src="/'.$art["photos"][0].'" height="180" width="130" class="card-img-top mt-1">
+                  <img src="/'.$art["photos"][0][0].'" height="180" width="130" class="card-img-top mt-1">
                   <div class="card-body">
                     <h4 class="card-title">'.$art["nom"].'</h4>
                     <h5>'.$art["prix"].'€</h5>

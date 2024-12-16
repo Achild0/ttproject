@@ -29,7 +29,7 @@
                           if ($counter == 0){
                             print('active');
                           }
-                          print(' "><img src="/'.$pic.'" class="d-block w-100"></div>');
+                          print(' "><img src="/'.$pic[0].'" class="d-block w-100"></div>');
                           $counter += 1;
                         }
                       ?>
@@ -59,7 +59,7 @@
                 <p class="fw-bold">
                   Prix : <?php print($mainproduct[0]["prix"]) ?>€
                 </p>
-                <button class="btn btn-success"  href="#" role="button">Contactez le 000-000-000 pour acheter !</a>
+                <button class="btn btn-success"  href="#" role="button">Contactez le +225 01 00 328 734 !</a>
             </div>
         </div>
       </div>

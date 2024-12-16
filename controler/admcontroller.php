@@ -14,11 +14,11 @@
 
 
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
-        print("POST OK");
+        //print("POST OK");
         if (!isset($_POST['token']) || $_POST['token'] !== $_SESSION['csrf_token']) {
             die("Requête invalide (CSRF détecté).");
         }
-        print("Token OK");
+        //print("Token OK");
         switch($_POST['type']){
 
             case "login":
@@ -115,7 +115,99 @@
                 addProduit($p_name,$p_prix,$p_desc,$p_categ,$photos);
                 exit(0);
                 break;
+            
+            case "product_modify":
+                 //var_dump($_POST);
+                 $p_name = htmlspecialchars($_POST["name"]);
+                 $p_valid = htmlspecialchars($_POST["valide"]);
+                 $p_categ = htmlspecialchars($_POST["categ"]);
+                 $p_prix = htmlspecialchars($_POST["prix"]);
+                 $p_desc = htmlspecialchars($_POST["desc"]);
+                 $p_id = htmlspecialchars($_POST["id"]);
+                 $p_rfile = htmlspecialchars($_POST["delpic"]);
+                 $photos = [];
+                 //var_dump($_FILES);
+                 try {
+                     // Undefined | Multiple Files | $_FILES Corruption Attack
+                     // If this request falls under any of them, treat it invalid.
+                     if (!isset($_FILES['imgs']['error'])) {
+                         throw new RuntimeException('Invalid parameters.');
+                     }
+                     $counter = 0;
+                     foreach($_FILES['imgs']['name'] as $img){
+ 
+                          // Check $_FILES['imgs']['error'] value.
+                         switch ($_FILES['imgs']['error'][$counter]) {
+                             case UPLOAD_ERR_OK:
+                                 break;
+                             case UPLOAD_ERR_NO_FILE:
+                                 throw new RuntimeException('No file sent.');
+                             case UPLOAD_ERR_INI_SIZE:
+                             case UPLOAD_ERR_FORM_SIZE:
+                                 throw new RuntimeException('Exceeded filesize limit.');
+                             default:
+                                 throw new RuntimeException('Unknown errors.');
+                         }
+ 
+                                             // You should also check filesize here. 
+                         if ($_FILES['imgs']['size'][$counter] > 1000000) {
+                             throw new RuntimeException('Exceeded filesize limit.');
+                         }
+ 
+                         // DO NOT TRUST $_FILES['imgs']['mime'] VALUE !!
+                         // Check MIME Type by yourself.
+                         $finfo = new finfo(FILEINFO_MIME_TYPE);
+                         if (false === $ext = array_search(
+                             $finfo->file($_FILES['imgs']['tmp_name'][$counter]),
+                             array(
+                                 'jpg' => 'image/jpeg',
+                                 'png' => 'image/png',
+                                 'gif' => 'image/gif',
+                                 'jfif'=> 'image/jfif'
+                             ),
+                             true
+                         )) {
+                             throw new RuntimeException('Invalid file format.');
+                         }
+                         
+                     // You should name it uniquely.
+                     // DO NOT USE $_FILES['imgs']['name'] WITHOUT ANY VALIDATION !!
+                     // On this example, obtain safe unique name from its binary data.
+                         $name = sprintf('img/produits/%s.%s',sha1_file($_FILES['imgs']['tmp_name'][$counter]),$ext);
+                         if (
+                             !move_uploaded_file($_FILES['imgs']['tmp_name'][$counter],$name)                            
+                         ) {
+                             throw new RuntimeException('Failed to move uploaded file.');
+                         }
+                     
+                         $photos[] = $name;
+                         $counter+= 1;
+                     }
+                 
+                    
+                 } catch (RuntimeException $e) {
+                 
+                     echo $e->getMessage();
+                 
+                 }
+ 
+                 modifyProduit($p_id,$p_valide,$p_name,$p_prix,$p_desc,$p_categ,$p_rfile,$photos);
+                 exit(0);
+            break;
 
+            case "category_creation":
+            break;
+
+            case "category_modifiy":
+            break;
+
+            case "product_get_by_categ":
+                if (isset($_POST["categ"])){
+                    echo json_encode(getProduitsByCateg(htmlspecialchars(intval($_POST["categ"]))));
+                    exit(0);
+                }
+            break;
+            
             default:
             break;
         }

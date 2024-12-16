@@ -3,6 +3,11 @@
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC ]);
 
+    // DEV DATA
+    /*$_SERVER["pdo"] = new PDO('mysql:host=localhost;dbname=mkboutick', 'mkbout', 'mk', [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC ]);
+    */
     // Data IP
     function addBanIp($ip) {
         $stmt = $_SERVER["pdo"]->prepare("INSERT INTO banned_ips (ip_address) VALUES (:ip)");
@@ -45,13 +50,13 @@
         $stmt = $_SERVER["pdo"]->prepare("SELECT produits.id, produits.nom,produits.description, produits.categorie , produits.prix FROM produits WHERE valide = 'OUI' LIMIT 10");
         $stmt->execute();
         $res = $stmt->fetchAll();
-        $stmt = $_SERVER["pdo"]->prepare("SELECT name FROM photos WHERE produit = :prod");
+        $stmt = $_SERVER["pdo"]->prepare("SELECT * FROM photos WHERE produit = :prod");
         $maxres = [];
         foreach($res as $prod){
             $stmt->execute(["prod" => $prod["id"]]);
             $ph = $stmt->fetchAll();    
             foreach($ph as $phot){
-            $prod["photos"][] = $phot["name"];
+            $prod["photos"][] = [$phot["name"],$phot["id"]];
             }
             $maxres[] = $prod;
         }
@@ -62,7 +67,6 @@
         $stmt = $_SERVER["pdo"]->prepare("INSERT INTO produits (nom,prix,description,categorie,valide) VALUES (:nom,:prix,:desc,:idcateg,'OUI')");
         $stmt->execute(['nom' => $nom,'prix' => $prix, 'desc'=> $desc, 'idcateg' => $idcateg]);
         $lastid = $_SERVER["pdo"]->lastInsertId();
-        print("LAstID = ".$lastid);
         $stmt = $_SERVER["pdo"]->prepare("INSERT INTO photos (name,produit) VALUES (:nom,:idprod)");
         foreach($photos as $pic){
             $stmt->execute(['nom'=>$pic,'idprod'=> $lastid]);
@@ -84,20 +88,23 @@
         $stmt->execute(['id' => $id]);
     }
 
-    function modifyProduit($id,$nom,$idcateg){
-        $stmt = $_SERVER["pdo"]->prepare("UPDATE produits SET nom = :nom,categorie = :idcateg WHERE id = $id");
-        $stmt->execute(['id' => $id,'nom' => $nom,'idcateg' => $idcateg]);
+    function modifyProduit($id,$valide,$nom,$prix,$desc,$idcateg,$rphoto,$aphoto){
+        $stmt = $_SERVER["pdo"]->prepare("UPDATE produits SET nom = :nom,categorie = :idcateg,valide = :valid,prix = :prix,descrption = :descri WHERE id = $id");
+        $stmt->execute(['id' => $id,'valid' => $valide,'prix' => $prix,'descri' => $desc,'nom' => $nom,'idcateg' => $idcateg]);
+        if ($rphoto.length() > 0){
+
+        }
     }
 
     function getProduit($id){
         $stmt = $_SERVER["pdo"]->prepare("SELECT * FROM produits WHERE id = :id");
         $stmt->execute(['id' => $id]);
         $res = $stmt->fetchAll();
-        $stmt = $_SERVER["pdo"]->prepare("SELECT name FROM photos WHERE produit = :prod");
+        $stmt = $_SERVER["pdo"]->prepare("SELECT * FROM photos WHERE produit = :prod");
         $stmt->execute(["prod" => $id]);
         $ph = $stmt->fetchAll();    
         foreach($ph as $phot){
-            $res["photos"][] = $phot["name"];
+            $res["photos"][] = [$phot["name"],$phot["id"]];
         }
         return $res;
     }
@@ -106,13 +113,13 @@
         $stmt = $_SERVER["pdo"]->prepare("SELECT * FROM produits WHERE categorie = :idcateg AND valide = 'OUI'");
         $stmt->execute(['idcateg' => $idcateg]);
         $res = $stmt->fetchAll();
-        $stmt = $_SERVER["pdo"]->prepare("SELECT name FROM photos WHERE produit = :prod");
+        $stmt = $_SERVER["pdo"]->prepare("SELECT * FROM photos WHERE produit = :prod");
         $catmaxres = [];
         foreach($res as $product){
             $stmt->execute(["prod" => $product["id"]]);
             $ph = $stmt->fetchAll();    
             foreach($ph as $phot){
-            $product["photos"][] = $phot["name"];
+            $product["photos"][] = [$phot["name"],$phot["id"]];
             }
             $catmaxres[] = $product;
         }
