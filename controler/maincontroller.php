@@ -27,7 +27,7 @@ $articles = [];
 
 if (isset($categ) && !empty($categ)) {
     foreach ($categs as $cat) {
-        if ($cat["name"] === $categ) {
+        if ($cat["nom"] === $categ) {
             $carticles = getProduitsByCateg($cat["id"]);
             require __DIR__ ."/../view/categpage.php";
             exit;

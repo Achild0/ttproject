@@ -1,5 +1,6 @@
 <?php
     include __DIR__.'/../model/admdata.php';
+    include __DIR__.'/../model/data.php';
     // placeholder en attendant que le model soit formulé
     function getBannedIps(){
         return array();
