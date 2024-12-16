@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <?php include __DIR__.'view/mendatory/head.php'; ?>
+    <?php include __DIR__.'/../mendatory/head.php'; ?>
     <body>
         <section class="container mt-5">
             <div class="row g-3">

@@ -1,7 +1,7 @@
 <html lang="fr">
-  <?php include __DIR__.'/view/mendatory/head.php'; ?>
+  <?php include __DIR__.'/mendatory/head.php'; ?>
   <body>
-    <?php include __DIR__.'/view/mendatory/navbar.php'; ?>
+    <?php include __DIR__.'/mendatory/navbar.php'; ?>
     <section style="margin-top: 160px;">
       <div class="text-center container" >
         <h1 class="lacoste_green">Bienvenue à MK Boutique</h1>
