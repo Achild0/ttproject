@@ -1,9 +1,17 @@
 <?php
-  //error_reporting(E_ALL ^ E_NOTICE);  
+  //error_reporting(E_ALL ^ E_NOTICE); 
   session_start();
+
+  if (session_status() !== PHP_SESSION_ACTIVE) {
+    die("Erreur : la session n'a pas pu être démarrée.");
+}
   if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); // Chaîne sécurisée et aléatoire
-  }
+    try {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    } catch (Exception $e) {
+        die("Erreur lors de la génération du jeton CSRF.");
+    }
+}
 
   // Directory
   $viewdir = "/view/";
@@ -25,6 +33,10 @@
   //Path manipulation
   $requestparts = explode('/', str_replace("?", "", $request));
   //print_r($requestparts);
+
+  if (empty($requestparts) || !is_array($requestparts)) {
+    die("Erreur : la requête est mal formée.");
+  }
 
   $route = isset($requestparts[1]) ? $requestparts[1] : '';
 
