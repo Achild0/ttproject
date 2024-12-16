@@ -1,5 +1,5 @@
 <?php
-    $_SERVER["pdo"] = new PDO('mysql:host=localhost;dbname=mkboutick','mkbout','mk');
+    $_SERVER["pdo"] = new PDO('mysql:host=zmtqpcnzmtqpcn.mysql.db;dbname=zmtqpcnzmtqpcn','zmtqpcnzmtqpcn','ALWY76wmDMmTBXW7dyfw');
 
     // Data IP
     function addBanIp($ip) {
