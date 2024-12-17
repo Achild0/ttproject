@@ -1,7 +1,7 @@
 <?php
     $_SERVER["pdo"] = new PDO('mysql:host=zmtqpcnzmtqpcn.mysql.db;dbname=zmtqpcnzmtqpcn', 'zmtqpcnzmtqpcn', 'ALWY76wmDMmTBXW7dyfw', [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC ]);*/
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC ]);
 
     // DEV DATA
     /*$_SERVER["pdo"] = new PDO('mysql:host=localhost;dbname=mkboutick', 'mkbout', 'mk', [
