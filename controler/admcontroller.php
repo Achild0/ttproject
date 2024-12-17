@@ -196,9 +196,27 @@
             break;
 
             case "category_creation":
+                if (isset($_POST["categ"])){
+                    addCateg(htmlspecialchars($_POST["categ"]));
+                    echo "Categorie crée";
+                    exit(0);
+                }
             break;
 
             case "category_modifiy":
+                if (isset($_POST["categ"]) && isset($_POST["categid"])){
+                    modifyCateg(htmlspecialchars($_POST["categ"]),htmlspecialchars($_POST["categid"]));
+                    echo "Categorie modifiée";
+                    exit(0);
+                }
+            break;
+
+            case "category_delete":
+                if (isset($_POST["categ"])){
+                    delCateg(htmlspecialchars($_POST["categ"]));
+                    echo "Categorie supprimée";
+                    exit(0);
+                }
             break;
 
             case "product_get_by_categ":

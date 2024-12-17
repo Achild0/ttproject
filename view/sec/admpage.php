@@ -28,6 +28,7 @@
                 </div>
                 <div class="mt-2">
                     <button id="modifiycateg" class = "btn btn-primary">Modifier</button>
+                    <button id="suppcateg" class = "btn btn-danger">Supprimer</button>
                 </div>
             </div>
             <h3>Créer un Produit</h3>
@@ -143,8 +144,8 @@
                 var uploadForm = $('#js-upload-form');
                 var imgtextupload = $('#js-upload-files')
 
-                var uploadFormMody = $("#")
-                var imgtextuploadMody = $("#")
+                var uploadFormMody = $("#js-upload-files-mod")
+                var imgtextuploadMody = $("#js-upload-submit-mod")
                 var files = new Array();
                 var remfiles = new Array();
 
@@ -163,9 +164,9 @@
                         $("#file_job").append('<div class="m-1 btn btn-secondary upload_img" value="'+i+'">Upload '+files[i].name+' Prêt</div>');
                     }
                     $(".upload_img").click(function(){ 
-                    r = files.splice($(this).attr("value"))
-                    $(this).remove()
-                })
+                        r = files.splice($(this).attr("value"))
+                        $(this).remove()
+                    })
                 }
 
                 function createProduct(){
@@ -303,28 +304,19 @@
 
                 $("#prd_mdfy_sel").change(function(){
                     files = new Array();
-                    //console.log(product_to_modify);
                     var arrkey = $("#prd_mdfy_sel").find(":selected").attr("key");
-                    //console.log(arrkey);
-                    //console.log(product_to_modify[arrkey]);
                     if (product_to_modify[arrkey].valide === "OUI"){
                         $("#prd_mdfy_val").prop("checked",true);
                     }else{
                         $("#prd_mdfy_val").prop("checked",false);
                     };
-                    //console.log("Val ok");
                     $("#nom-mod-prod").val(product_to_modify[arrkey].nom);
-                    //console.log("Nom ok");
                     $("#categ-mod-prod").val(product_to_modify[arrkey].categorie);
-                    //console.log("Cat ok");
                     $("#desc-mod-prod").text(product_to_modify[arrkey].description);
-                    //console.log("Desc ok");
                     $("#prix-mod-prod").val(product_to_modify[arrkey].prix);
-                    //console.log("Prix ok");
                     for(var i = 0;i < product_to_modify[arrkey].photos.length;i++){
                         $("#prd-image-viewer").append('<img pid="'+ product_to_modify[key].photos[i][1] +'" src="/'+product_to_modify[key].photos[i][0]+'" height="100" width="100" class="m-1 prd_image"/>');
                     }
-                     //console.log("Images ok");
                     $("#mod_prod_div").show();
                     
                    $(".prd_image").click(function(){
@@ -373,6 +365,51 @@
                     })
                 });
 
+                $("#catcreate").click(function(){
+                    if ($("#inputCateg").val() && $("#inputCateg").val() != ""){
+                        $.post("/adm",
+                        {
+                            type: "category_creation",
+                            token: stoken,
+                            categ: sanitizeString($("#inputCateg").val())
+                        },
+                        function(data, status){
+                            alert(data);
+                        })
+                    }
+                })
+
+                $("#modifiycateg").click(function(){
+                    if ($("#listCateg").val() != 0 && $("#nomcat").val() != ""){
+                        $.post("/adm",
+                        {
+                            type: "category_modifiy",
+                            token: stoken,
+                            categ: sanitizeString($("#nomcat").val()),
+                            categid:sanitizeString($("#listCateg").val())
+                        },
+                        function(data, status){
+                            alert(data);
+                        })
+                    }
+                })
+
+                $("#suppcateg").click(function(){
+                    if (!confirm("Voulez vous vraiment supprimer cette catégorie ?")){
+                        return;
+                    }
+                    if ($("#listCateg").val() != 0){
+                        $.post("/adm",
+                        {
+                            type: "category_delete",
+                            token: stoken,
+                            categ: sanitizeString($("#listCateg").val())
+                        },
+                        function(data, status){
+                            alert(data);
+                        })
+                    }
+                })
             });
             </script>
     </body>
