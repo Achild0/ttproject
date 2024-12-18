@@ -114,24 +114,30 @@
 
                 addProduit($p_name,$p_prix,$p_desc,$p_categ,$photos);
                 exit(0);
-                break;
+            break;
             
             case "product_modify":
+                //exit(0);
                  //var_dump($_POST);
                  $p_name = htmlspecialchars($_POST["name"]);
-                 $p_valid = htmlspecialchars($_POST["valide"]);
+                 $p_valide = htmlspecialchars($_POST["valide"]);
                  $p_categ = htmlspecialchars($_POST["categ"]);
                  $p_prix = htmlspecialchars($_POST["prix"]);
                  $p_desc = htmlspecialchars($_POST["desc"]);
                  $p_id = htmlspecialchars($_POST["id"]);
-                 $p_rfile = htmlspecialchars($_POST["delpic"]);
+                 $p_rfile = explode(',',htmlspecialchars($_POST["delpic"]));
                  $photos = [];
                  //var_dump($_FILES);
                  try {
+                    if (count($p_rfile) == 1){
+                        if ($p_rfile[0] === ""){
+                            $p_rfile = [];
+                        }
+                    }
                      // Undefined | Multiple Files | $_FILES Corruption Attack
                      // If this request falls under any of them, treat it invalid.
                      if (!isset($_FILES['imgs']['error'])) {
-                         throw new RuntimeException('Invalid parameters.');
+                         throw new RuntimeException('Aucune photo envoyée.');
                      }
                      $counter = 0;
                      foreach($_FILES['imgs']['name'] as $img){
@@ -190,9 +196,17 @@
                      echo $e->getMessage();
                  
                  }
- 
                  modifyProduit($p_id,$p_valide,$p_name,$p_prix,$p_desc,$p_categ,$p_rfile,$photos);
+                 echo "Produit modifié avec succès";
                  exit(0);
+            break;
+
+            case "product_delete":
+                if (isset($_POST["idprod"])){
+                    deleteProduit(htmlspecialchars($_POST["idprod"]));
+                    echo "Produit supprimé";
+                    exit(0);
+                }
             break;
 
             case "category_creation":
@@ -205,7 +219,7 @@
 
             case "category_modifiy":
                 if (isset($_POST["categ"]) && isset($_POST["categid"])){
-                    modifyCateg(htmlspecialchars($_POST["categ"]),htmlspecialchars($_POST["categid"]));
+                    modifyCateg(htmlspecialchars($_POST["categid"]),htmlspecialchars($_POST["categ"]));
                     echo "Categorie modifiée";
                     exit(0);
                 }
@@ -224,6 +238,11 @@
                     echo json_encode(getProduitsByCateg(htmlspecialchars(intval($_POST["categ"]))));
                     exit(0);
                 }
+            break;
+
+            case "category_get":
+                echo json_encode(getCategs());
+                exit(0);
             break;
             
             default:

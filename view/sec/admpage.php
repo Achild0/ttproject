@@ -14,11 +14,11 @@
             </div>
             <div class="container mb-3 p-2 border">
                 <label for="listCateg" class="form-label">Modifier une catégorie</label>
-                <select id="listCateg" class="form-select">
+                <select id="listCateg" class="form-select cat-select">
                     <?php
                         foreach($categs as $cat){
                             print('<option value="'.$cat["id"].'">'. $cat["nom"].'</option>');
-                          }
+                        }
                     ?>
                     <option value="0" selected>Choisir une catégorie</option>
                 </select>
@@ -36,7 +36,7 @@
                 <label class="form-label" for="nom-prod">Nom produit</label>
                 <input type="text" class="form-control" id="nom-prod" placeholder="Nom du nouveau produit"/>
                 <label class="form-label mt-2" for="categ-prod">Choisir sa catégorie</label>
-                <select id="categ-prod" class="form-select">
+                <select id="categ-prod" class="form-select cat-select">
                     <option value="0" selected>Choisir une catégorie</option>
                     <?php
                         foreach($categs as $cat){print('<option value="'.$cat["id"].'">'. $cat["nom"].'</option>');}
@@ -82,13 +82,13 @@
             <h3>Modifier un produit</h3>
             <div class="container mb-3 p-2 border">
                 <label class="form-label" for="prd_mdfy_sel_cat">Choisir la categorie du produit à modifier</label>
-                <select class="form-select" id="prd_mdfy_sel_cat">
-                    <option selected>Choisir une catégorie</option>
+                <select class="form-select cat-select" id="prd_mdfy_sel_cat">
+                    <option value="0" selected>Choisir une catégorie</option>
                     <?php foreach($categs as $cat){print('<option value="'.$cat["id"].'">'. $cat["nom"].'</option>');} ?>
                 </select>
                 <label class="form-label" for="prd_mdfy_sel">Choisir le produit à modifier</label>
                 <select class="form-select" id="prd_mdfy_sel" disabled="true">
-                    <option selected>Choisir un produit</option>
+                    <option value="0" selected>Choisir un produit</option>
                 </select>
                 <div id="mod_prod_div" class="container mt-3">
                 <div class="form-check form-switch">
@@ -122,7 +122,7 @@
 
                         <div class="js-upload-finished mt-2">
                             <h3>Images prêtes pour l'upload :</h3>
-                            <div class="container" id="file_job">
+                            <div class="container" id="file_job_mod">
                             </div>
                         </div>
                         </div>
@@ -154,14 +154,18 @@
                 var prd_prix;
                 var prd_desc = "";
 
+
+
                 var product_to_modify;
+                var prod_mod_descr = "";
 
                 $("#mod_prod_div").hide();
+                renewCategs();
 
-                function refreshFiles(){
-                    $("#file_job").text("");
+                function refreshFiles(fjid){
+                    $(fjid).text("");
                     for (let i = 0;i < files.length;i++){
-                        $("#file_job").append('<div class="m-1 btn btn-secondary upload_img" value="'+i+'">Upload '+files[i].name+' Prêt</div>');
+                        $(fjid).append('<div class="m-1 btn btn-secondary upload_img" value="'+i+'">Upload '+files[i].name+' Prêt</div>');
                     }
                     $(".upload_img").click(function(){ 
                         r = files.splice($(this).attr("value"))
@@ -234,21 +238,26 @@
                     })
                 }
 
-                $("#js-upload-submit").click(function(){
-                    if (document.getElementById("js-upload-files-mod").files[0] == null){
-                        return
-                    }
-                    for (let i = 0;i < files.length; i++){
-                        if (document.getElementById("js-upload-files-mod").files[0].name == files[i].name){
-                            return
-                        }
-                    }
-                    files.push(document.getElementById("js-upload-files-mod").files[0]);
-                    refreshFiles();
-                    $("#js-upload-files").val("");
-                })
+                function renewCategs(){
+                    $(".cat-select").html('<option value="0" selected>Choisir une catégorie</option>');
+                    $.post("/adm",
+                        {
+                            type: "category_get",
+                            token: stoken
+                        },
+                        function(data, status){
+                            console.log(data);
+                            for(key in data){
+                                $(".cat-select").append('<option value="'+ data[key].id +'">'+ data[key].nom + '</option>');
+                            }
+                        },"json")
+                    $("#prd_mdfy_sel").html('<option value="0" selected>Choisir un produit</option>');
+                    $("#prd_mdfy_sel").prop("disabled",true);
+                    $("#mod_prod_div").hide();
+                }
 
-                $("#js-upload-submit-mod").click(function(){
+
+                $("#js-upload-submit").click(function(){
                     if (document.getElementById("js-upload-files").files[0] == null){
                         return
                     }
@@ -258,7 +267,21 @@
                         }
                     }
                     files.push(document.getElementById("js-upload-files").files[0]);
-                    refreshFiles();
+                    refreshFiles("#file_job");
+                    $("#js-upload-files").val("");
+                })
+
+                $("#js-upload-submit-mod").click(function(){
+                    if (document.getElementById("js-upload-files-mod").files[0] == null){
+                        return
+                    }
+                    for (let i = 0;i < files.length; i++){
+                        if (document.getElementById("js-upload-files-mod").files[0].name == files[i].name){
+                            return
+                        }
+                    }
+                    files.push(document.getElementById("js-upload-files-mod").files[0]);
+                    refreshFiles("#file_job_mod");
                     $("#js-upload-files-mod").val("");
                 })
 
@@ -300,9 +323,12 @@
                     $("#prd_mdfy_sel").prop("disabled",false);
 
                     fetchCategProduct($("#prd_mdfy_sel_cat").val());
-                })
+                });
 
                 $("#prd_mdfy_sel").change(function(){
+                    if ($(this).val() == 0){
+                        return;
+                    }
                     files = new Array();
                     var arrkey = $("#prd_mdfy_sel").find(":selected").attr("key");
                     if (product_to_modify[arrkey].valide === "OUI"){
@@ -314,6 +340,7 @@
                     $("#categ-mod-prod").val(product_to_modify[arrkey].categorie);
                     $("#desc-mod-prod").text(product_to_modify[arrkey].description);
                     $("#prix-mod-prod").val(product_to_modify[arrkey].prix);
+                    $("#prd-image-viewer").html("");
                     for(var i = 0;i < product_to_modify[arrkey].photos.length;i++){
                         $("#prd-image-viewer").append('<img pid="'+ product_to_modify[key].photos[i][1] +'" src="/'+product_to_modify[key].photos[i][0]+'" height="100" width="100" class="m-1 prd_image"/>');
                     }
@@ -323,12 +350,20 @@
                         for(var i = 0;i < product_to_modify[arrkey].photos.length;i++){
                             if (parseInt($(this).attr("pid")) == product_to_modify[arrkey].photos[i][1]){
                                 var lostpic = product_to_modify[arrkey].photos.splice(i,1)
-                                remfiles.push(lostpic[1]);
+                                console.log(lostpic[0][1])
+                                remfiles.push(lostpic[0][1]);
                             }
-                            console.log(product_to_modify[arrkey].photos)
-                        $(this).remove();
                         }
+                        console.log(product_to_modify[arrkey].photos)
+                        console.log(remfiles)
+                        $(this).remove();
+                        
                     });
+
+                    $("#desc-mod-prod").change(function(){
+                        prod_mod_descr = $(this).text()
+                    })
+
 
                     $("#btn_modif_prd").click(function(){
                         var formdata = new FormData();
@@ -343,7 +378,7 @@
                         formdata.append('name',sanitizeString($("#nom-mod-prod").val()));
                         formdata.append('categ',sanitizeString($("#categ-mod-prod").val()));
                         formdata.append('prix',sanitizeString($("#prix-mod-prod").val()));
-                        formdata.append('desc',sanitizeString($("#desc-mod-prod").text()));
+                        formdata.append('desc',sanitizeString(prod_mod_descr));
                         formdata.append('delpic',remfiles);
                         for (let i = 0;i < files.length; i++){
                             formdata.append('imgs[]',files[i], files[i].name)
@@ -356,13 +391,30 @@
                             contentType: false,
                             type: 'POST',
                             success: function(data){
-                                alert("Produit crée avec succès !");
+                                alert(data);
                             },
                             error: function(data){
                                 alert("Echec lors de la création du produit. Merci de contacter Virgile Lesbats !");
                             }
                         });
                     })
+                });
+
+                $("#btn_delete_prd").click(function(){
+                    if(!$("#prd_mdfy_sel").val() == 0){
+                        if (!confirm("Voulez vous vraiment supprimer ce produit ?")){
+                            return;
+                        }
+                        $.post("/adm",
+                        {
+                            type: "product_delete",
+                            token: stoken,
+                            idprod: sanitizeString($("#prd_mdfy_sel").val())
+                        },
+                        function(data, status){
+                            alert(data);
+                        })
+                    }
                 });
 
                 $("#catcreate").click(function(){
@@ -377,7 +429,8 @@
                             alert(data);
                         })
                     }
-                })
+                    renewCategs()
+                });
 
                 $("#modifiycateg").click(function(){
                     if ($("#listCateg").val() != 0 && $("#nomcat").val() != ""){
@@ -385,14 +438,15 @@
                         {
                             type: "category_modifiy",
                             token: stoken,
-                            categ: sanitizeString($("#nomcat").val()),
-                            categid:sanitizeString($("#listCateg").val())
+                            categ:$("#nomcat").val(),
+                            categid:$("#listCateg").val()
                         },
                         function(data, status){
                             alert(data);
                         })
                     }
-                })
+                    renewCategs();
+                });
 
                 $("#suppcateg").click(function(){
                     if (!confirm("Voulez vous vraiment supprimer cette catégorie ?")){
@@ -409,7 +463,8 @@
                             alert(data);
                         })
                     }
-                })
+                    renewCategs();
+                });
             });
             </script>
     </body>

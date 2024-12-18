@@ -6,8 +6,8 @@
     // DEV DATA
     /*$_SERVER["pdo"] = new PDO('mysql:host=localhost;dbname=mkboutick', 'mkbout', 'mk', [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC ]);
-    */
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC ]);*/
+    
     // Data IP
     function addBanIp($ip) {
         $stmt = $_SERVER["pdo"]->prepare("INSERT INTO banned_ips (ip_address) VALUES (:ip)");
@@ -33,7 +33,7 @@
     }
 
     function modifyCateg($id,$nom){
-        $stmt = $_SERVER["pdo"]->prepare("UPDATE categories SET  nom = :nom WHERE id = :id");
+        $stmt = $_SERVER["pdo"]->prepare("UPDATE categories SET nom = :nom WHERE id = :id");
         $stmt->execute(['nom' => $nom,'id' => $id]);
     }
 
@@ -74,12 +74,12 @@
     }
 
     function invalidateProduit($id){
-        $stmt = $_SERVER["pdo"]->prepare("UPDATE produits SET valide = 'NON' WHERE id = $id");
+        $stmt = $_SERVER["pdo"]->prepare("UPDATE produits SET valide = 'NON' WHERE id = :id");
         $stmt->execute(['id' => $id]);
     }
 
     function validateProduit($id){
-        $stmt = $_SERVER["pdo"]->prepare("UPDATE produits SET valide = 'OUI' WHERE id = $id");
+        $stmt = $_SERVER["pdo"]->prepare("UPDATE produits SET valide = 'OUI' WHERE id = :id");
         $stmt->execute(['id' => $id]);
     }
 
@@ -89,11 +89,20 @@
     }
 
     function modifyProduit($id,$valide,$nom,$prix,$desc,$idcateg,$rphoto,$aphoto){
-        $stmt = $_SERVER["pdo"]->prepare("UPDATE produits SET nom = :nom,categorie = :idcateg,valide = :valid,prix = :prix,descrption = :descri WHERE id = $id");
+        $stmt = $_SERVER["pdo"]->prepare("UPDATE produits SET nom = :nom, categorie = :idcateg, valide = :valid, prix = :prix, description = :descri WHERE id = :id");
         $stmt->execute(['id' => $id,'valid' => $valide,'prix' => $prix,'descri' => $desc,'nom' => $nom,'idcateg' => $idcateg]);
-        if ($rphoto.length() > 0){
-
+        if (count($rphoto) > 0){
+            $stmt = $_SERVER["pdo"]->prepare("DELETE FROM photos WHERE id = :id");
+            foreach($rphoto as $pic){
+                $stmt->execute(['id' => $pic]);
+            }
         }
+        if (count($aphoto) > 0) {
+            $stmt = $_SERVER["pdo"]->prepare("INSERT INTO photos (name,produit) VALUES (:nom,:idprod)");
+            foreach($aphoto as $pic){
+                $stmt->execute(['nom'=>$pic,'idprod'=> $id]);
+            }
+        } 
     }
 
     function getProduit($id){
