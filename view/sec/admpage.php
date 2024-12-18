@@ -93,16 +93,16 @@
                 <div id="mod_prod_div" class="container mt-3">
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="prd_mdfy_val" checked>
-                    <label class="form-check-label" for="prd_mdfy_val">Produit valide/actif</label>
+                    <label class="form-check-label" for="prd_mdfy_val">Produit valide/actif (si décoché ne sera plus visible dans le magasin, mais toujours disponoible ici, recocher le rend à nouveau visible)</label>
                 </div>
                     <label class="form-label" for="nom-mod-prod">Nom produit</label>
                     <input type="text" class="form-control" id="nom-mod-prod" placeholder="Nom du nouveau produit"/>
                     <label class="form-label mt-2" for="categ-mod-prod">Choisir sa catégorie</label>
-                    <select id="categ-mod-prod" class="form-select" aria-label="Default select example">
+                    <select id="categ-mod-prod" class="form-select cat-select" aria-label="Default select example">
                         <?php foreach($categs as $cat){print('<option value="'.$cat["id"].'">'. $cat["nom"].'</option>');} ?>
                     </select>
                     <label class="form-label" for="desc-mod-prod">Description</label>
-                    <textarea type="text" class="form-control" id="desc-mod-prod" placeholder="Entrez une description"></textarea>
+                    <textarea type="text" class="form-control" id="desc-mod-prod"></textarea>
                     <label class="form-label" for="prix-mod-prod">Prix</label>
                     <input type="number" class="form-control" id="prix-mod-prod" step="0.01" placeholder="0.00"/>
                     <p class="mt-2">Photos liés au produit (cliquer sur une photo l'enlevera de celui-ci) :</p>
@@ -361,7 +361,7 @@
                     });
 
                     $("#desc-mod-prod").change(function(){
-                        prod_mod_descr = $(this).text()
+                        prod_mod_descr = $(this).val()
                     })
 
 
